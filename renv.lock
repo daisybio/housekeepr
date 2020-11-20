@@ -116,12 +116,6 @@
       "Source": "Bioconductor",
       "Hash": "8430a6ec606d0d92198ff107f1d98261"
     },
-    "GEOmetadb": {
-      "Package": "GEOmetadb",
-      "Version": "1.50.0",
-      "Source": "Bioconductor",
-      "Hash": "230f3afaff2015cbf71a8eaef2b0e292"
-    },
     "GEOquery": {
       "Package": "GEOquery",
       "Version": "2.56.0",
@@ -858,12 +852,6 @@
       "Repository": "CRAN",
       "Hash": "e87a35ec73b157552814869f45a63aa3"
     },
-    "mouse4302.db": {
-      "Package": "mouse4302.db",
-      "Version": "3.2.3",
-      "Source": "Bioconductor",
-      "Hash": "7e394f5cd4a5789bef2d99da79c18941"
-    },
     "munsell": {
       "Package": "munsell",
       "Version": "0.5.0",
@@ -884,18 +872,6 @@
       "Source": "Repository",
       "Repository": "CRAN",
       "Hash": "a399e4773075fc2375b71f45fca186c4"
-    },
-    "org.Mm.eg.db": {
-      "Package": "org.Mm.eg.db",
-      "Version": "3.11.4",
-      "Source": "Bioconductor",
-      "Hash": "133273535e42fadf1d244ef36e372811"
-    },
-    "org.Rn.eg.db": {
-      "Package": "org.Rn.eg.db",
-      "Version": "3.11.4",
-      "Source": "Bioconductor",
-      "Hash": "ed8c8527c724a46e6b446f7cc4d5f1bd"
     },
     "pillar": {
       "Package": "pillar",
@@ -1015,12 +991,6 @@
       "Source": "Repository",
       "Repository": "CRAN",
       "Hash": "8c8298583adbbe76f3c2220eef71bebc"
-    },
-    "rat2302.db": {
-      "Package": "rat2302.db",
-      "Version": "3.2.3",
-      "Source": "Bioconductor",
-      "Hash": "6561b774f48f57a070f4499f4707c506"
     },
     "rbokeh": {
       "Package": "rbokeh",
