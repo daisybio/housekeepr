@@ -11,8 +11,8 @@ services:
       - pgdata:/var/lib/postgresql/data
 
   housekeeprA:
-    image: gitlab.lrz.de:5005/baumbachlab/housekeepr:dev
-    command: bash -c "chown -R shiny:shiny /srv/hkg-data/ && env | grep HOUSEKEEPR > /srv/housekeepr/.Renviron && /usr/bin/shiny-server.sh"
+    image: quirinmanz/housekeepr:latest
+    command: bash -c "chown -R shiny:shiny /srv/hkg-data/ && env | grep HOUSEKEEPR > /srv/housekeepr/.Renviron && /init"
     depends_on:
       - db
     volumes:
@@ -22,8 +22,8 @@ services:
       - HOUSEKEEPR_ENV=production
       - HOUSEKEEPR_EXTERNAL_URL=http://10.162.163.34:8098
   housekeeprB:
-    image: gitlab.lrz.de:5005/baumbachlab/housekeepr:dev
-    command: bash -c "chown -R shiny:shiny /srv/hkg-data/ && env | grep HOUSEKEEPR > /srv/housekeepr/.Renviron && /usr/bin/shiny-server.sh"
+    image: quirinmanz/housekeepr:latest
+    command: bash -c "chown -R shiny:shiny /srv/hkg-data/ && env | grep HOUSEKEEPR > /srv/housekeepr/.Renviron && /init"
     depends_on:
       - db
     volumes:
@@ -33,8 +33,8 @@ services:
       - HOUSEKEEPR_ENV=production
       - HOUSEKEEPR_EXTERNAL_URL=http://10.162.163.34:8098
   housekeeprC:
-    image: gitlab.lrz.de:5005/baumbachlab/housekeepr:dev
-    command: bash -c "chown -R shiny:shiny /srv/hkg-data/ && env | grep HOUSEKEEPR > /srv/housekeepr/.Renviron && /usr/bin/shiny-server.sh"
+    image: quirinmanz/housekeepr:latest
+    command: bash -c "chown -R shiny:shiny /srv/hkg-data/ && env | grep HOUSEKEEPR > /srv/housekeepr/.Renviron && /init"
     depends_on:
       - db
     volumes:
@@ -44,8 +44,8 @@ services:
       - HOUSEKEEPR_ENV=production
       - HOUSEKEEPR_EXTERNAL_URL=http://10.162.163.34:8098
   housekeeprD:
-    image: gitlab.lrz.de:5005/baumbachlab/housekeepr:dev
-    command: bash -c "chown -R shiny:shiny /srv/hkg-data/ && env | grep HOUSEKEEPR > /srv/housekeepr/.Renviron && /usr/bin/shiny-server.sh"
+    image: quirinmanz/housekeepr:latest
+    command: bash -c "chown -R shiny:shiny /srv/hkg-data/ && env | grep HOUSEKEEPR > /srv/housekeepr/.Renviron && /init"
     depends_on:
       - db
     volumes:
@@ -55,8 +55,8 @@ services:
       - HOUSEKEEPR_ENV=production
       - HOUSEKEEPR_EXTERNAL_URL=http://10.162.163.34:8098
   housekeeprU:
-    image: gitlab.lrz.de:5005/baumbachlab/housekeepr:dev
-    command: bash -c "chown -R shiny:shiny /srv/hkg-data/ && env | grep HOUSEKEEPR > /srv/housekeepr/.Renviron && /usr/bin/shiny-server.sh"
+    image: quirinmanz/housekeepr:latest
+    command: bash -c "chown -R shiny:shiny /srv/hkg-data/ && env | grep HOUSEKEEPR > /srv/housekeepr/.Renviron && /init"
     depends_on:
       - db
     volumes:
@@ -67,8 +67,8 @@ services:
       #- HOUSEKEEPR_MODE=presentation
       - HOUSEKEEPR_EXTERNAL_URL=http://10.162.163.34:8098
   housekeeprV:
-    image: gitlab.lrz.de:5005/baumbachlab/housekeepr:dev
-    command: bash -c "chown -R shiny:shiny /srv/hkg-data/ && env | grep HOUSEKEEPR > /srv/housekeepr/.Renviron && /usr/bin/shiny-server.sh"
+    image: quirinmanz/housekeepr:latest
+    command: bash -c "chown -R shiny:shiny /srv/hkg-data/ && env | grep HOUSEKEEPR > /srv/housekeepr/.Renviron && /init"
     depends_on:
       - db
     volumes:
@@ -79,8 +79,8 @@ services:
       #- HOUSEKEEPR_MODE=presentation
       - HOUSEKEEPR_EXTERNAL_URL=http://10.162.163.34:8098
   housekeeprW:
-    image: gitlab.lrz.de:5005/baumbachlab/housekeepr:dev
-    command: bash -c "chown -R shiny:shiny /srv/hkg-data/ && env | grep HOUSEKEEPR > /srv/housekeepr/.Renviron && /usr/bin/shiny-server.sh"
+    image: quirinmanz/housekeepr:latest
+    command: bash -c "chown -R shiny:shiny /srv/hkg-data/ && env | grep HOUSEKEEPR > /srv/housekeepr/.Renviron && /init"
     depends_on:
       - db
     volumes:
@@ -91,8 +91,8 @@ services:
       #- HOUSEKEEPR_MODE=presentation
       - HOUSEKEEPR_EXTERNAL_URL=http://10.162.163.34:8098
   housekeeprX:
-    image: gitlab.lrz.de:5005/baumbachlab/housekeepr:dev
-    command: bash -c "chown -R shiny:shiny /srv/hkg-data/ && env | grep HOUSEKEEPR > /srv/housekeepr/.Renviron && /usr/bin/shiny-server.sh"
+    image: quirinmanz/housekeepr:latest
+    command: bash -c "chown -R shiny:shiny /srv/hkg-data/ && env | grep HOUSEKEEPR > /srv/housekeepr/.Renviron && /init"
     depends_on:
       - db
     volumes:
