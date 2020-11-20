@@ -16,7 +16,7 @@ COPY . .
 RUN sed -i 's/site_dir \/srv\/shiny-server;/app_dir \/srv\/housekeepr;/g' /etc/shiny-server/shiny-server.conf
 
 #install R packages via renv
-ENV RENV_VERSION 0.10.0-14
+ENV RENV_VERSION 0.12.0
 RUN R -e "install.packages('remotes', repos = c(CRAN = 'https://cloud.r-project.org')); \ 
           remotes::install_github('rstudio/renv@${RENV_VERSION}'); \
           renv::restore()"
