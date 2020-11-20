@@ -1,0 +1,11 @@
+hkg-data/
+.Rproj*
+packrat/lib*/
+.Rproj.user
+.RData
+.Rprofile
+.Rhistory
+hkg.sqlite
+mesh-*
+debugging/
+install-packages.R

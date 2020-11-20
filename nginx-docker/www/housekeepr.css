@@ -1,0 +1,18 @@
+.popover {
+  color: #000;
+}
+
+.shiny-input-radiogroup > label.control-label { 
+  display: table-cell; 
+  text-align: left; 
+  vertical-align: middle; 
+  padding-right: 10px;
+}
+
+.shiny-input-radiogroup { 
+  display: table-row;
+}
+
+.shiny-input-radiogroup > div.item {
+  padding-right: 15px;
+}

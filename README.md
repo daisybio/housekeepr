@@ -1,0 +1,1 @@
+Repository of the [HouseKeepR](https://exbio.wzw.tum.de/housekeepr/) application.

@@ -1,0 +1,127 @@
+version: "3"
+services:
+
+  db:
+    image: postgres:latest
+    environment:
+      - POSTGRES_PASSWORD=vz5ENsAd
+      - POSTGRES_USER=housekeepr
+      - POSTGRES_DB=housekeepr
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  housekeeprA:
+    image: gitlab.lrz.de:5005/baumbachlab/housekeepr:dev
+    command: bash -c "chown -R shiny:shiny /srv/hkg-data/ && env | grep HOUSEKEEPR > /srv/housekeepr/.Renviron && /usr/bin/shiny-server.sh"
+    depends_on:
+      - db
+    volumes:
+      - HouseKeepRDataVolume:/srv/hkg-data
+    environment:
+      - HOUSEKEEPR_DATADIR=/srv/hkg-data
+      - HOUSEKEEPR_ENV=production
+      - HOUSEKEEPR_EXTERNAL_URL=http://10.162.163.34:8098
+  housekeeprB:
+    image: gitlab.lrz.de:5005/baumbachlab/housekeepr:dev
+    command: bash -c "chown -R shiny:shiny /srv/hkg-data/ && env | grep HOUSEKEEPR > /srv/housekeepr/.Renviron && /usr/bin/shiny-server.sh"
+    depends_on:
+      - db
+    volumes:
+      - HouseKeepRDataVolume:/srv/hkg-data
+    environment:
+      - HOUSEKEEPR_DATADIR=/srv/hkg-data
+      - HOUSEKEEPR_ENV=production
+      - HOUSEKEEPR_EXTERNAL_URL=http://10.162.163.34:8098
+  housekeeprC:
+    image: gitlab.lrz.de:5005/baumbachlab/housekeepr:dev
+    command: bash -c "chown -R shiny:shiny /srv/hkg-data/ && env | grep HOUSEKEEPR > /srv/housekeepr/.Renviron && /usr/bin/shiny-server.sh"
+    depends_on:
+      - db
+    volumes:
+      - HouseKeepRDataVolume:/srv/hkg-data
+    environment:
+      - HOUSEKEEPR_DATADIR=/srv/hkg-data
+      - HOUSEKEEPR_ENV=production
+      - HOUSEKEEPR_EXTERNAL_URL=http://10.162.163.34:8098
+  housekeeprD:
+    image: gitlab.lrz.de:5005/baumbachlab/housekeepr:dev
+    command: bash -c "chown -R shiny:shiny /srv/hkg-data/ && env | grep HOUSEKEEPR > /srv/housekeepr/.Renviron && /usr/bin/shiny-server.sh"
+    depends_on:
+      - db
+    volumes:
+      - HouseKeepRDataVolume:/srv/hkg-data
+    environment:
+      - HOUSEKEEPR_DATADIR=/srv/hkg-data
+      - HOUSEKEEPR_ENV=production
+      - HOUSEKEEPR_EXTERNAL_URL=http://10.162.163.34:8098
+  housekeeprU:
+    image: gitlab.lrz.de:5005/baumbachlab/housekeepr:dev
+    command: bash -c "chown -R shiny:shiny /srv/hkg-data/ && env | grep HOUSEKEEPR > /srv/housekeepr/.Renviron && /usr/bin/shiny-server.sh"
+    depends_on:
+      - db
+    volumes:
+      - HouseKeepRDataVolume:/srv/hkg-data
+    environment:
+      - HOUSEKEEPR_DATADIR=/srv/hkg-data
+      - HOUSEKEEPR_ENV=production
+      #- HOUSEKEEPR_MODE=presentation
+      - HOUSEKEEPR_EXTERNAL_URL=http://10.162.163.34:8098
+  housekeeprV:
+    image: gitlab.lrz.de:5005/baumbachlab/housekeepr:dev
+    command: bash -c "chown -R shiny:shiny /srv/hkg-data/ && env | grep HOUSEKEEPR > /srv/housekeepr/.Renviron && /usr/bin/shiny-server.sh"
+    depends_on:
+      - db
+    volumes:
+      - HouseKeepRDataVolume:/srv/hkg-data
+    environment:
+      - HOUSEKEEPR_DATADIR=/srv/hkg-data
+      - HOUSEKEEPR_ENV=production
+      #- HOUSEKEEPR_MODE=presentation
+      - HOUSEKEEPR_EXTERNAL_URL=http://10.162.163.34:8098
+  housekeeprW:
+    image: gitlab.lrz.de:5005/baumbachlab/housekeepr:dev
+    command: bash -c "chown -R shiny:shiny /srv/hkg-data/ && env | grep HOUSEKEEPR > /srv/housekeepr/.Renviron && /usr/bin/shiny-server.sh"
+    depends_on:
+      - db
+    volumes:
+      - HouseKeepRDataVolume:/srv/hkg-data
+    environment:
+      - HOUSEKEEPR_DATADIR=/srv/hkg-data
+      - HOUSEKEEPR_ENV=production
+      #- HOUSEKEEPR_MODE=presentation
+      - HOUSEKEEPR_EXTERNAL_URL=http://10.162.163.34:8098
+  housekeeprX:
+    image: gitlab.lrz.de:5005/baumbachlab/housekeepr:dev
+    command: bash -c "chown -R shiny:shiny /srv/hkg-data/ && env | grep HOUSEKEEPR > /srv/housekeepr/.Renviron && /usr/bin/shiny-server.sh"
+    depends_on:
+      - db
+    volumes:
+      - HouseKeepRDataVolume:/srv/hkg-data
+    environment:
+      - HOUSEKEEPR_DATADIR=/srv/hkg-data
+      - HOUSEKEEPR_ENV=production
+      #- HOUSEKEEPR_MODE=presentation
+      - HOUSEKEEPR_EXTERNAL_URL=http://10.162.163.34:8098
+
+  nginx:
+    build: nginx-docker
+    #image: housekeepr_nginx_local:latest
+    ports:
+      - "8098:80"
+    #  - "8099:8080"
+    depends_on:
+      - housekeeprA
+      - housekeeprB
+      - housekeeprC
+      - housekeeprD
+      - housekeeprU
+      - housekeeprV
+      - housekeeprW
+      - housekeeprX
+
+    command: ["/wait-for-it.sh", "housekeeprA:3838", "-t", "0", "--", "/wait-for-it.sh", "housekeeprB:3838", "-t", "0", "--", "/wait-for-it.sh", "housekeeprC:3838", "-t", "0", "--", "/wait-for-it.sh", "housekeeprD:3838", "-t", "0", "--", "/wait-for-it.sh", "housekeeprU:3838", "-t", "0", "--", "/wait-for-it.sh", "housekeeprV:3838", "-t", "0", "--", "/wait-for-it.sh", "housekeeprW:3838", "-t", "0", "--", "/wait-for-it.sh", "housekeeprX:3838", "-t", "0", "--", "nginx", "-g", "daemon off;"]
+
+
+volumes:
+  HouseKeepRDataVolume:
+  pgdata:
