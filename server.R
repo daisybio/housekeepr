@@ -2029,8 +2029,10 @@ server <- function(input, output, session) {
       orgs <- setNames(as.list(orgs), tolower(orgs))
       
       reactive_vals$orgAnno <- lapply(
-        orgs,
-        FUN=function(o) {
+        1:length(orgs),
+        FUN=function(i) {
+          o <- orgs[[i]]
+          setProgress(message='Downloading annotation data', detail=sprintf('Downloading annotation data for %s', o), value=i/length(orgs))
           queryResult <- query(x=query(ah, "EnsDb"), pattern=o)
           ensembl_release <- isolate(reactive_vals$ensembl_release)
           print(paste(o, ": Using Ensembl", ensembl_release ,"EnsDb"))
@@ -2039,8 +2041,10 @@ server <- function(input, output, session) {
       )
       
       reactive_vals$orgMart <- lapply(
-        orgs,
-        FUN=function(org) {
+        1:length(orgs),
+        FUN=function(i) {
+          org <- orgs[[i]]
+          setProgress(message='Downloading annotation data', detail=sprintf('Downloading ensembl mart for %s', org), value=i/length(orgs))
           orgAbbr <- strsplit(tolower(org), " ")[[1]]
           orgAbbr[1] <- substr(orgAbbr[1],1,1)
           orgAbbr <- paste0(c(orgAbbr, "_gene_ensembl"), collapse="")
@@ -2091,8 +2095,9 @@ server <- function(input, output, session) {
       setProgress(value=1.0)
       
       reactive_vals$status <- PIPELINE_STATUS$FIND_HOUSEKEEPING_GENES
-      if (any(sapply(reactive_vals$orgMart, is.null)))
+      if (any(sapply(reactive_vals$orgMart, is.null))){
         reactive_vals$status <- PIPELINE_STATUS$IDLE
+      }
     })
   })
   
