@@ -1,4 +1,4 @@
-hkg-data/
+hkg-data/*
 .Rproj*
 packrat/lib*/
 .Rproj.user
