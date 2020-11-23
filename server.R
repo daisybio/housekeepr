@@ -2031,7 +2031,7 @@ server <- function(input, output, session) {
       reactive_vals$orgAnno <- lapply(
         orgs,
         FUN=function(o) {
-          queryResult <- query(x=ah, pattern=o)
+          queryResult <- query(x=query(ah, "EnsDb"), pattern=o)
           ensembl_release <- isolate(reactive_vals$ensembl_release)
           print(paste(o, ": Using Ensembl", ensembl_release ,"EnsDb"))
           queryResult[[grep(paste("Ensembl",ensembl_release,"EnsDb"), mcols(queryResult)$title, fixed=T)]]
@@ -2269,7 +2269,7 @@ server <- function(input, output, session) {
         gene_ids=character(0),
         rank=double(0))
       
-      reactive_vals$available_ensembl_releases <- str_sort(unique(gsub(".*?Ensembl version ([0-9]+).*", "\\1", unlist(mcols(ah)$description))), numeric = T, decreasing = T)
+      reactive_vals$available_ensembl_releases <- str_sort(unique(gsub(".*?Ensembl version ([0-9]+).*", "\\1", unlist(mcols(query(ah, "EnsDb"))$description))), numeric = T, decreasing = T)
       
       # does not work if annotationhub does not have current ensembl version
       tryCatch({

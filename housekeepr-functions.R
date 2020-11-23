@@ -363,7 +363,7 @@ ensureGeneIdColumn <- function(tT, currentOrganism, ah, ensembl_release, orgDb=N
     setProgress(detail='Identifying and mapping gene annotations to ensembl gene ids')
   
   if (is.null(orgDb)) {
-    queryResult <- query(x=ah, pattern=currentOrganism)
+    queryResult <- query(x=query(ah, "EnsDb"), pattern=currentOrganism)
     orgDb <- queryResult[[grep(paste("Ensembl",ensembl_release,"EnsDb"), mcols(queryResult)$title, fixed=T)]]
   }
   
