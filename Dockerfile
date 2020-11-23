@@ -19,7 +19,9 @@ RUN sed -i 's/site_dir \/srv\/shiny-server;/app_dir \/srv\/housekeepr;/g' /etc/s
 ENV RENV_VERSION 0.12.0
 RUN R -e "install.packages('remotes', repos = c(CRAN = 'https://cloud.r-project.org')); \ 
           remotes::install_github('rstudio/renv@${RENV_VERSION}'); \
-          renv::restore()"
+          renv::restore(); \
+          library(AnnotationHub); \
+          ah <- AnnotationHub()"
 
 #fix bug where app greys out on SSL connection
 RUN echo 'sanitize_errors off;disable_protocols xdr-streaming xhr-streaming iframe-eventsource iframe-htmlfile;' >> /etc/shiny-server/shiny-server.conf
