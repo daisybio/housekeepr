@@ -18,7 +18,7 @@ RUN sed -i 's/site_dir \/srv\/shiny-server;/app_dir \/srv\/housekeepr;/g' /etc/s
 #make annotationhub cache dir
 RUN mkdir -p –m777 /root/.cache/AnnotationHub
 #install R packages via renv
-ENV RENV_VERSION 0.12.0
+ENV RENV_VERSION 0.12.2
 RUN R -e "install.packages('remotes', repos = c(CRAN = 'https://cloud.r-project.org')); \ 
           remotes::install_github('rstudio/renv@${RENV_VERSION}'); \
           renv::restore(); \

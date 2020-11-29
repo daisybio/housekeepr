@@ -2039,6 +2039,7 @@ server <- function(input, output, session) {
           queryResult[[grep(paste("Ensembl",ensembl_release,"EnsDb"), mcols(queryResult)$title, fixed=T)]]
         }
       )
+      names(reactive_vals$orgAnno) <- names(orgs)
       
       reactive_vals$orgMart <- lapply(
         1:length(orgs),
@@ -2092,6 +2093,8 @@ server <- function(input, output, session) {
           }
           mart
         })
+      names(reactive_vals$orgMart) <- names(orgs)
+      
       setProgress(value=1.0)
       
       reactive_vals$status <- PIPELINE_STATUS$FIND_HOUSEKEEPING_GENES

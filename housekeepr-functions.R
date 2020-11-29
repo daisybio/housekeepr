@@ -194,7 +194,7 @@ findEnsemblGeneIdColumn <- function(tT, currentOrganism, orgDb, targetGeneIdColN
 
   # verify that these ensembl gene ids are still valid and not "retired" (according to ensembl)
   tryCatch({
-    mapped <- select(orgDb, keys=ensemblIds[!is.na(ENSEMBL_ID),ENSEMBL_ID], keytype="GENEID", columns="SYMBOL") %>%
+    mapped <- ensembldb::select(orgDb, keys=ensemblIds[!is.na(ENSEMBL_ID),ENSEMBL_ID], keytype="GENEID", columns="SYMBOL") %>%
       dplyr::distinct(GENEID) %>%
       dplyr::pull(GENEID)
     ensemblIds <- ensemblIds[ENSEMBL_ID%in%mapped]
@@ -265,7 +265,7 @@ mapEnsemblTranscriptToGeneId <- function(tT, currentOrganism, orgDb, targetGeneI
   
   # map ensembl transcript to ensembl gene id
   tryCatch({
-    mapped <- select(orgDb, keys=tT[!is.na(ENSEMBL_ID),ENSEMBL_ID], keytype="TXID", columns="GENEID")
+    mapped <- ensembldb::select(orgDb, keys=tT[!is.na(ENSEMBL_ID),ENSEMBL_ID], keytype="TXID", columns="GENEID")
     tT <- merge(tT, mapped, by.x="ENSEMBL_ID", by.y="TXID", allow.cartesian=TRUE, all.x=TRUE)
     
     if (targetGeneIdColName %in% names(tT)) {
@@ -326,7 +326,7 @@ mapEntrezIdToEnsemblGeneId <- function(tT, currentOrganism, orgDb, targetGeneIdC
     # map entrez IDs to ensembl gene ids
     if (!nrow(entrezIds) == 0){
     tryCatch({
-      mapped <- select(orgDb, keys=entrezIds$ENTREZ_ID, keytype="ENTREZID", columns="GENEID")
+      mapped <- ensembldb::select(orgDb, keys=entrezIds$ENTREZ_ID, keytype="ENTREZID", columns="GENEID")
       mapped$ENTREZID <- as.character(mapped$ENTREZID)
       entrezIds2 <- merge(entrezIds, mapped, by.x="ENTREZ_ID", by.y="ENTREZID", allow.cartesian=TRUE)
       tT[, ID := as.character(ID)]
@@ -364,7 +364,7 @@ ensureGeneIdColumn <- function(tT, currentOrganism, ah, ensembl_release, orgDb=N
   
   if (is.null(orgDb)) {
     queryResult <- query(x=query(ah, "EnsDb"), pattern=currentOrganism)
-    orgDb <- queryResult[[grep(paste("Ensembl",ensembl_release,"EnsDb"), mcols(queryResult)$title, fixed=T)]]
+    orgDb <- queryResult[[grep(paste("Ensembl", ensembl_release, "EnsDb"), mcols(queryResult)$title, fixed=T)]]
   }
   
   tT[,merge_idx:=1:nrow(tT)]
@@ -762,7 +762,7 @@ calculateBootstrapMatrix <- function(ranking_matrix, bootstrap_replications, boo
 annotateTargetParalogGroupsWithSymbols <- function(m, paralogue_groups, geneIdColumn, target_orgDb, 
                                                    paralogue_groups_to_be_annotated=paralogue_groups[,get("paralog_group")]) {
   # get symbols for paralog groups
-  mapped <- na.omit(select(target_orgDb, keys=paralogue_groups[paralog_group %in% paralogue_groups_to_be_annotated,
+  mapped <- na.omit(ensembldb::select(target_orgDb, keys=paralogue_groups[paralog_group %in% paralogue_groups_to_be_annotated,
                                                                get(geneIdColumn)], keytype="GENEID", column="SYMBOL"))
   mapped <- data.table(mapped %>%
                          dplyr::group_by(GENEID) %>%
