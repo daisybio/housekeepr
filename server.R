@@ -1790,9 +1790,28 @@ server <- function(input, output, session) {
         tryCatch({
           
           attrs <- c("gse", "gpl", "accession", "title")
-          sample_summary <- entrez_summary(db="gds", id=entrez_search(db="gds", 
-                                                                      term=paste(sprintf('(%s[Accession] AND %s[Accession] AND "gsm"[Filter])', sel_ds$accession, sel_ds$gpl), collapse = " OR "), 
-                                                                      retmax=500)$ids)
+          
+          sample_summary <- list()
+          n_samples_num <- as.numeric(sel_ds[, gsub('(^<=)?', '', n_samples)])
+          max_n_samples <- 100
+          curr_n_samples <- 0
+          last_idx <- 0
+          for (ds_idx in 1:nrow(sel_ds)) {
+            # offset <- batch_size*(batch-1)
+            curr_n_samples <- curr_n_samples + n_samples_num[ds_idx]
+            if (curr_n_samples >= max_n_samples | ds_idx == nrow(sel_ds)) {
+              sample_summary <- c(sample_summary, entrez_summary(db="gds", 
+                                                                 id=entrez_search(db="gds",
+                                                                                  term=paste(sprintf('(%s[Accession] AND %s[Accession] AND "gsm"[Filter])', 
+                                                                                                     sel_ds$accession[(last_idx+1):(ds_idx)], 
+                                                                                                     sel_ds$gpl[(last_idx+1):(ds_idx)]), 
+                                                                                             collapse = " OR "),
+                                                                                  retmax=500)$ids, always_return_list = T))
+              last_idx <- ds_idx
+              curr_n_samples <- 0
+            }
+          }
+          class(sample_summary) <- c("esummary_list", "list")
           sample_summary <- cSplit(rbindlist(lapply(extract_from_esummary(sample_summary, attrs, F), as.data.table)), 
                                    splitCols = 'gse', sep = ";", fixed = T, direction = 'long')
           sample_summary[, gse := sprintf("GSE%s", sample_summary$gse)]
