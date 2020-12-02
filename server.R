@@ -7,7 +7,7 @@ server <- function(input, output, session) {
   #source("housekeepr-mesh.R", local = T, echo = T)
   load("init_data.RData") #contains allOrganisms, allTisues and allConditions
   waiter_hide()
-
+  if (!interactive()) sink(stderr(), type = "output")
   disablePrettyCheckbox <- function(p) {
     p$children[[1]]$children[[1]]$attribs <- append(p$children[[1]]$children[[1]]$attribs, list(disabled="disabled"))
     p
@@ -1586,6 +1586,7 @@ server <- function(input, output, session) {
       # mesh_terms <- c(mesh_terms, 'NOT "expression profiling by high throughput sequencing"[DataSet Type]')
       # try to only allow expression arrays instead, to exclude Methylation
       # minimum 3 samples per set, otherwise eBays does not work
+      tryCatch({
       mesh_terms <- c(mesh_terms, 'Expression profiling by array [DataSet Type]', '"3"[n_samples] : "1000"[n_samples])')
       print(mesh_terms)
       search_result <- entrez_search(db="gds", term=paste(mesh_terms, collapse = " "), retmax=500)$ids
@@ -1614,6 +1615,12 @@ server <- function(input, output, session) {
       }
       reactive_vals$rentrez_search_result <- result_list
       print("processed result from NCBI")
+      }, error=function(e) {
+        reactive_vals$queryingGEOdatasets <- FALSE
+        reactive_vals$rentrez_search_result <- NULL
+        print(e)
+        showNotification(sprintf("Retrieving datasets from NCBI failed. Error: %s", e$message), type = "error", duration = NULL)
+      })
     } else {
       reactive_vals$rentrez_search_result <- NULL
       return()
@@ -1825,6 +1832,9 @@ server <- function(input, output, session) {
           setorder(sample_summary, accession, samples.accession)
           
           print("samples done")
+        }, error=function(e) {
+          print(e)
+          showNotification(sprintf("Retrieving samples from NCBI failed. Error: %s", e$message), type = "error", duration = NULL)
         }, finally = {
           reactive_vals$queryingGEOsamples <- FALSE
         })
@@ -2303,7 +2313,7 @@ server <- function(input, output, session) {
         archives <- listEnsemblArchives()
         na.omit(as.numeric(data.table(archives)[grep("^\\d+$", version), version]))
       }, error = function(e){
-          reactive_vals$analysis_error <- sprintf("Please try HousKeepR again later. We cannot reach Ensembl: %s", e$message)
+        showNotification(sprintf("Please try HousKeepR again later. We cannot reach Ensembl: %s", e$message), type = "error", duration = NULL)
       })
       
       gc()
