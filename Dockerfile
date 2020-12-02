@@ -16,7 +16,8 @@ COPY . .
 RUN sed -i 's/site_dir \/srv\/shiny-server;/app_dir \/srv\/housekeepr;/g' /etc/shiny-server/shiny-server.conf
 
 #make annotationhub cache dir
-RUN mkdir -p –m777 /root/.cache/AnnotationHub
+RUN mkdir -p –m 777 /root/.cache/AnnotationHub
+
 #install R packages via renv
 ENV RENV_VERSION 0.12.2
 RUN R -e "install.packages('remotes', repos = c(CRAN = 'https://cloud.r-project.org')); \ 
@@ -31,6 +32,5 @@ RUN echo 'sanitize_errors off;disable_protocols xdr-streaming xhr-streaming ifra
 
 # make shiny owner of housekeepr-dir 
 RUN chown -R shiny ./
-RUN chown -R shiny /root/.cache
 
 EXPOSE 3838

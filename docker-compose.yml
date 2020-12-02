@@ -20,7 +20,7 @@ services:
     environment:
       - HOUSEKEEPR_DATADIR=/srv/hkg-data
       - HOUSEKEEPR_ENV=production
-      - HOUSEKEEPR_EXTERNAL_URL=http://10.162.163.34:8098
+      - HOUSEKEEPR_EXTERNAL_URL=http://localhost:8098
   housekeeprB:
     image: quirinmanz/housekeepr:latest
     command: bash -c "chown -R shiny:shiny /srv/hkg-data/ && env | grep HOUSEKEEPR > /srv/housekeepr/.Renviron && /init"
@@ -31,7 +31,7 @@ services:
     environment:
       - HOUSEKEEPR_DATADIR=/srv/hkg-data
       - HOUSEKEEPR_ENV=production
-      - HOUSEKEEPR_EXTERNAL_URL=http://10.162.163.34:8098
+      - HOUSEKEEPR_EXTERNAL_URL=http://localhost:8098
   housekeeprC:
     image: quirinmanz/housekeepr:latest
     command: bash -c "chown -R shiny:shiny /srv/hkg-data/ && env | grep HOUSEKEEPR > /srv/housekeepr/.Renviron && /init"
@@ -42,7 +42,7 @@ services:
     environment:
       - HOUSEKEEPR_DATADIR=/srv/hkg-data
       - HOUSEKEEPR_ENV=production
-      - HOUSEKEEPR_EXTERNAL_URL=http://10.162.163.34:8098
+      - HOUSEKEEPR_EXTERNAL_URL=http://localhost:8098
   housekeeprD:
     image: quirinmanz/housekeepr:latest
     command: bash -c "chown -R shiny:shiny /srv/hkg-data/ && env | grep HOUSEKEEPR > /srv/housekeepr/.Renviron && /init"
@@ -53,7 +53,7 @@ services:
     environment:
       - HOUSEKEEPR_DATADIR=/srv/hkg-data
       - HOUSEKEEPR_ENV=production
-      - HOUSEKEEPR_EXTERNAL_URL=http://10.162.163.34:8098
+      - HOUSEKEEPR_EXTERNAL_URL=http://localhost:8098
   housekeeprU:
     image: quirinmanz/housekeepr:latest
     command: bash -c "chown -R shiny:shiny /srv/hkg-data/ && env | grep HOUSEKEEPR > /srv/housekeepr/.Renviron && /init"
@@ -65,7 +65,7 @@ services:
       - HOUSEKEEPR_DATADIR=/srv/hkg-data
       - HOUSEKEEPR_ENV=production
       #- HOUSEKEEPR_MODE=presentation
-      - HOUSEKEEPR_EXTERNAL_URL=http://10.162.163.34:8098
+      - HOUSEKEEPR_EXTERNAL_URL=http://localhost:8098
   housekeeprV:
     image: quirinmanz/housekeepr:latest
     command: bash -c "chown -R shiny:shiny /srv/hkg-data/ && env | grep HOUSEKEEPR > /srv/housekeepr/.Renviron && /init"
@@ -77,7 +77,7 @@ services:
       - HOUSEKEEPR_DATADIR=/srv/hkg-data
       - HOUSEKEEPR_ENV=production
       #- HOUSEKEEPR_MODE=presentation
-      - HOUSEKEEPR_EXTERNAL_URL=http://10.162.163.34:8098
+      - HOUSEKEEPR_EXTERNAL_URL=http://localhost:8098
   housekeeprW:
     image: quirinmanz/housekeepr:latest
     command: bash -c "chown -R shiny:shiny /srv/hkg-data/ && env | grep HOUSEKEEPR > /srv/housekeepr/.Renviron && /init"
@@ -89,7 +89,7 @@ services:
       - HOUSEKEEPR_DATADIR=/srv/hkg-data
       - HOUSEKEEPR_ENV=production
       #- HOUSEKEEPR_MODE=presentation
-      - HOUSEKEEPR_EXTERNAL_URL=http://10.162.163.34:8098
+      - HOUSEKEEPR_EXTERNAL_URL=http://localhost:8098
   housekeeprX:
     image: quirinmanz/housekeepr:latest
     command: bash -c "chown -R shiny:shiny /srv/hkg-data/ && env | grep HOUSEKEEPR > /srv/housekeepr/.Renviron && /init"
@@ -101,7 +101,7 @@ services:
       - HOUSEKEEPR_DATADIR=/srv/hkg-data
       - HOUSEKEEPR_ENV=production
       #- HOUSEKEEPR_MODE=presentation
-      - HOUSEKEEPR_EXTERNAL_URL=http://10.162.163.34:8098
+      - HOUSEKEEPR_EXTERNAL_URL=http://localhost:8098
 
   nginx:
     build: nginx-docker
