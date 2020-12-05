@@ -1795,7 +1795,6 @@ server <- function(input, output, session) {
           return()
         }
         tryCatch({
-          
           attrs <- c("gse", "gpl", "accession", "title")
           
           sample_summary <- list()
@@ -1806,14 +1805,32 @@ server <- function(input, output, session) {
           for (ds_idx in 1:nrow(sel_ds)) {
             # offset <- batch_size*(batch-1)
             curr_n_samples <- curr_n_samples + n_samples_num[ds_idx]
-            if (curr_n_samples >= max_n_samples | ds_idx == nrow(sel_ds)) {
-              sample_summary <- c(sample_summary, entrez_summary(db="gds", 
-                                                                 id=entrez_search(db="gds",
-                                                                                  term=paste(sprintf('(%s[Accession] AND %s[Accession] AND "gsm"[Filter])', 
-                                                                                                     sel_ds$accession[(last_idx+1):(ds_idx)], 
-                                                                                                     sel_ds$gpl[(last_idx+1):(ds_idx)]), 
-                                                                                             collapse = " OR "),
-                                                                                  retmax=500)$ids, always_return_list = T))
+            if (curr_n_samples >= max_n_samples |
+                ds_idx == nrow(sel_ds)) {
+              tmp_samples <- entrez_search(
+                db = "gds",
+                term =
+                  paste(
+                    sprintf(
+                      '(%s[Accession] AND %s[Accession] AND "gsm"[Filter])',
+                      sel_ds$accession[(last_idx +
+                                          1):(ds_idx)],
+                      sel_ds$gpl[(last_idx +
+                                    1):(ds_idx)]
+                    ),
+                    collapse = " OR "
+                  ),
+                retmax =
+                  500
+                ,use_history=TRUE)
+              sample_summary <- c(
+                sample_summary,
+                entrez_summary(
+                  db = "gds",
+                  web_history = tmp_samples$web_history,
+                  always_return_list = T,
+                )
+              )
               last_idx <- ds_idx
               curr_n_samples <- 0
             }
