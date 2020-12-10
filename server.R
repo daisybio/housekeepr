@@ -52,6 +52,7 @@ server <- function(input, output, session) {
     for (i in 1:length(GSE_list)) {
       tryCatch({
         gse_gpl <- GSE_list[[i]]
+      	print(sprintf("processing: %s", gse_gpl))
         gse <- strsplit(gse_gpl, ".", fixed=T)[[1]][1]
         gpl <- strsplit(gse_gpl, ".", fixed=T)[[1]][2]
         setProgress(message=paste('Processing data set', gse, '(', gpl, ')'), detail='Loading ...')
