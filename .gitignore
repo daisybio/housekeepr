@@ -5,7 +5,7 @@ packrat/lib*/
 .RData
 .Rprofile
 .Rhistory
-hkg.sqlite
+hkg.sqlite*
 mesh-*
 debugging/
 install-packages.R
