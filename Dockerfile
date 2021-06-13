@@ -15,22 +15,24 @@ COPY . .
 #update shiny server conf and configure it to run housekeepr in single app mode
 RUN sed -i 's/site_dir \/srv\/shiny-server;/app_dir \/srv\/housekeepr;/g' /etc/shiny-server/shiny-server.conf
 
-#make annotationhub cache dir
-RUN mkdir -p –m777 /root/.cache/AnnotationHub
+
 #install R packages via renv
-ENV RENV_VERSION 0.12.2
+ENV RENV_VERSION 0.12.3
 RUN R -e "install.packages('remotes', repos = c(CRAN = 'https://cloud.r-project.org')); \ 
           remotes::install_github('rstudio/renv@${RENV_VERSION}'); \
-          renv::restore(); \
-          library(AnnotationHub); \
-          setAnnotationHubOption('ASK', FALSE); \
-          ah <- AnnotationHub()"
+          renv::restore();"
 
 #fix bug where app greys out on SSL connection
 RUN echo 'sanitize_errors off;disable_protocols xdr-streaming xhr-streaming iframe-eventsource iframe-htmlfile;' >> /etc/shiny-server/shiny-server.conf
 
 # make shiny owner of housekeepr-dir 
 RUN chown -R shiny ./
-RUN chown -R shiny /root/.cache
+
+# download AnnotationHub to speed up loading time
+USER shiny
+RUN R -e "library(AnnotationHub); \
+          ah <- AnnotationHub(ask = FALSE)"
+          
+USER root
 
 EXPOSE 3838

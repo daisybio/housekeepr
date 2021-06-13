@@ -30,9 +30,10 @@ downloadFromGEO <- function(gse,
     tryCatch({
       withTimeout({
         gset_raw <- getGEO(GEO=gse, GSEMatrix=GSEMatrix, AnnotGPL=AnnotGPL, destdir = destdir)
-      }, timeout=10*60, onTimeout="error")
+      }, timeout=30*60, onTimeout="error")
       timed_out <- FALSE
     }, TimeoutException=function(e) {
+      print(sprintf("Caught error downloading %s: %s", gse, e$message))
       timed_out <- TRUE
     })
   }

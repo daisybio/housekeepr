@@ -20,8 +20,8 @@ services:
     environment:
       - HOUSEKEEPR_DATADIR=/srv/hkg-data
       - HOUSEKEEPR_ENV=production
-      - HOUSEKEEPR_EXTERNAL_URL=http://10.162.163.34:8098
-      - R_DEFAULT_INTERNET_TIMEOUT=600
+      - HOUSEKEEPR_EXTERNAL_URL=http://localhost:8098
+      - R_DEFAULT_INTERNET_TIMEOUT=1800
   housekeeprB:
     image: quirinmanz/housekeepr:latest
     command: bash -c "chown -R shiny:shiny /srv/hkg-data/ && env | grep 'HOUSEKEEPR\|R_DEFAULT_INTERNET_TIMEOUT' > /srv/housekeepr/.Renviron && /init"
@@ -32,8 +32,8 @@ services:
     environment:
       - HOUSEKEEPR_DATADIR=/srv/hkg-data
       - HOUSEKEEPR_ENV=production
-      - HOUSEKEEPR_EXTERNAL_URL=http://10.162.163.34:8098
-      - R_DEFAULT_INTERNET_TIMEOUT=600
+      - HOUSEKEEPR_EXTERNAL_URL=http://localhost:8098
+      - R_DEFAULT_INTERNET_TIMEOUT=1800
   housekeeprC:
     image: quirinmanz/housekeepr:latest
     command: bash -c "chown -R shiny:shiny /srv/hkg-data/ && env | grep 'HOUSEKEEPR\|R_DEFAULT_INTERNET_TIMEOUT' > /srv/housekeepr/.Renviron && /init"
@@ -44,8 +44,8 @@ services:
     environment:
       - HOUSEKEEPR_DATADIR=/srv/hkg-data
       - HOUSEKEEPR_ENV=production
-      - HOUSEKEEPR_EXTERNAL_URL=http://10.162.163.34:8098
-      - R_DEFAULT_INTERNET_TIMEOUT=600
+      - HOUSEKEEPR_EXTERNAL_URL=http://localhost:8098
+      - R_DEFAULT_INTERNET_TIMEOUT=1800
   housekeeprD:
     image: quirinmanz/housekeepr:latest
     command: bash -c "chown -R shiny:shiny /srv/hkg-data/ && env | grep 'HOUSEKEEPR\|R_DEFAULT_INTERNET_TIMEOUT' > /srv/housekeepr/.Renviron && /init"
@@ -56,8 +56,8 @@ services:
     environment:
       - HOUSEKEEPR_DATADIR=/srv/hkg-data
       - HOUSEKEEPR_ENV=production
-      - HOUSEKEEPR_EXTERNAL_URL=http://10.162.163.34:8098
-      - R_DEFAULT_INTERNET_TIMEOUT=600
+      - HOUSEKEEPR_EXTERNAL_URL=http://localhost:8098
+      - R_DEFAULT_INTERNET_TIMEOUT=1800
   housekeeprU:
     image: quirinmanz/housekeepr:latest
     command: bash -c "chown -R shiny:shiny /srv/hkg-data/ && env | grep 'HOUSEKEEPR\|R_DEFAULT_INTERNET_TIMEOUT' > /srv/housekeepr/.Renviron && /init"
@@ -69,8 +69,8 @@ services:
       - HOUSEKEEPR_DATADIR=/srv/hkg-data
       - HOUSEKEEPR_ENV=production
       #- HOUSEKEEPR_MODE=presentation
-      - HOUSEKEEPR_EXTERNAL_URL=http://10.162.163.34:8098
-      - R_DEFAULT_INTERNET_TIMEOUT=600
+      - HOUSEKEEPR_EXTERNAL_URL=http://localhost:8098
+      - R_DEFAULT_INTERNET_TIMEOUT=1800
   housekeeprV:
     image: quirinmanz/housekeepr:latest
     command: bash -c "chown -R shiny:shiny /srv/hkg-data/ && env | grep 'HOUSEKEEPR\|R_DEFAULT_INTERNET_TIMEOUT' > /srv/housekeepr/.Renviron && /init"
@@ -82,8 +82,8 @@ services:
       - HOUSEKEEPR_DATADIR=/srv/hkg-data
       - HOUSEKEEPR_ENV=production
       #- HOUSEKEEPR_MODE=presentation
-      - HOUSEKEEPR_EXTERNAL_URL=http://10.162.163.34:8098
-      - R_DEFAULT_INTERNET_TIMEOUT=600
+      - HOUSEKEEPR_EXTERNAL_URL=http://localhost:8098
+      - R_DEFAULT_INTERNET_TIMEOUT=1800
   housekeeprW:
     image: quirinmanz/housekeepr:latest
     command: bash -c "chown -R shiny:shiny /srv/hkg-data/ && env | grep 'HOUSEKEEPR\|R_DEFAULT_INTERNET_TIMEOUT' > /srv/housekeepr/.Renviron && /init"
@@ -95,8 +95,8 @@ services:
       - HOUSEKEEPR_DATADIR=/srv/hkg-data
       - HOUSEKEEPR_ENV=production
       #- HOUSEKEEPR_MODE=presentation
-      - HOUSEKEEPR_EXTERNAL_URL=http://10.162.163.34:8098
-      - R_DEFAULT_INTERNET_TIMEOUT=600
+      - HOUSEKEEPR_EXTERNAL_URL=http://localhost:8098
+      - R_DEFAULT_INTERNET_TIMEOUT=1800
   housekeeprX:
     image: quirinmanz/housekeepr:latest
     command: bash -c "chown -R shiny:shiny /srv/hkg-data/ && env | grep 'HOUSEKEEPR\|R_DEFAULT_INTERNET_TIMEOUT' > /srv/housekeepr/.Renviron && /init"
@@ -108,8 +108,8 @@ services:
       - HOUSEKEEPR_DATADIR=/srv/hkg-data
       - HOUSEKEEPR_ENV=production
       #- HOUSEKEEPR_MODE=presentation
-      - HOUSEKEEPR_EXTERNAL_URL=http://10.162.163.34:8098
-      - R_DEFAULT_INTERNET_TIMEOUT=600
+      - HOUSEKEEPR_EXTERNAL_URL=http://localhost:8098
+      - R_DEFAULT_INTERNET_TIMEOUT=1800
 
   nginx:
     build: nginx-docker

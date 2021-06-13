@@ -7,7 +7,7 @@ server <- function(input, output, session) {
   #source("housekeepr-mesh.R", local = T, echo = T)
   load("init_data.RData") #contains allOrganisms, allTisues and allConditions
   waiter_hide()
-
+  if (!interactive()) sink(stderr(), type = "output")
   disablePrettyCheckbox <- function(p) {
     p$children[[1]]$children[[1]]$attribs <- append(p$children[[1]]$children[[1]]$attribs, list(disabled="disabled"))
     p
@@ -52,6 +52,7 @@ server <- function(input, output, session) {
     for (i in 1:length(GSE_list)) {
       tryCatch({
         gse_gpl <- GSE_list[[i]]
+      	print(sprintf("processing: %s", gse_gpl))
         gse <- strsplit(gse_gpl, ".", fixed=T)[[1]][1]
         gpl <- strsplit(gse_gpl, ".", fixed=T)[[1]][2]
         setProgress(message=paste('Processing data set', gse, '(', gpl, ')'), detail='Loading ...')
@@ -1586,6 +1587,7 @@ server <- function(input, output, session) {
       # mesh_terms <- c(mesh_terms, 'NOT "expression profiling by high throughput sequencing"[DataSet Type]')
       # try to only allow expression arrays instead, to exclude Methylation
       # minimum 3 samples per set, otherwise eBays does not work
+      tryCatch({
       mesh_terms <- c(mesh_terms, 'Expression profiling by array [DataSet Type]', '"3"[n_samples] : "1000"[n_samples])')
       print(mesh_terms)
       search_result <- entrez_search(db="gds", term=paste(mesh_terms, collapse = " "), retmax=500)$ids
@@ -1614,6 +1616,12 @@ server <- function(input, output, session) {
       }
       reactive_vals$rentrez_search_result <- result_list
       print("processed result from NCBI")
+      }, error=function(e) {
+        reactive_vals$queryingGEOdatasets <- FALSE
+        reactive_vals$rentrez_search_result <- NULL
+        print(e)
+        showNotification(sprintf("Retrieving datasets from NCBI failed. Error: %s", e$message), type = "error", duration = NULL)
+      })
     } else {
       reactive_vals$rentrez_search_result <- NULL
       return()
@@ -1788,7 +1796,6 @@ server <- function(input, output, session) {
           return()
         }
         tryCatch({
-          
           attrs <- c("gse", "gpl", "accession", "title")
           
           sample_summary <- list()
@@ -1799,14 +1806,32 @@ server <- function(input, output, session) {
           for (ds_idx in 1:nrow(sel_ds)) {
             # offset <- batch_size*(batch-1)
             curr_n_samples <- curr_n_samples + n_samples_num[ds_idx]
-            if (curr_n_samples >= max_n_samples | ds_idx == nrow(sel_ds)) {
-              sample_summary <- c(sample_summary, entrez_summary(db="gds", 
-                                                                 id=entrez_search(db="gds",
-                                                                                  term=paste(sprintf('(%s[Accession] AND %s[Accession] AND "gsm"[Filter])', 
-                                                                                                     sel_ds$accession[(last_idx+1):(ds_idx)], 
-                                                                                                     sel_ds$gpl[(last_idx+1):(ds_idx)]), 
-                                                                                             collapse = " OR "),
-                                                                                  retmax=500)$ids, always_return_list = T))
+            if (curr_n_samples >= max_n_samples |
+                ds_idx == nrow(sel_ds)) {
+              tmp_samples <- entrez_search(
+                db = "gds",
+                term =
+                  paste(
+                    sprintf(
+                      '(%s[Accession] AND %s[Accession] AND "gsm"[Filter])',
+                      sel_ds$accession[(last_idx +
+                                          1):(ds_idx)],
+                      sel_ds$gpl[(last_idx +
+                                    1):(ds_idx)]
+                    ),
+                    collapse = " OR "
+                  ),
+                retmax =
+                  500
+                ,use_history=TRUE)
+              sample_summary <- c(
+                sample_summary,
+                entrez_summary(
+                  db = "gds",
+                  web_history = tmp_samples$web_history,
+                  always_return_list = T,
+                )
+              )
               last_idx <- ds_idx
               curr_n_samples <- 0
             }
@@ -1825,6 +1850,9 @@ server <- function(input, output, session) {
           setorder(sample_summary, accession, samples.accession)
           
           print("samples done")
+        }, error=function(e) {
+          print(e)
+          showNotification(sprintf("Retrieving samples from NCBI failed. Error: %s", e$message), type = "error", duration = NULL)
         }, finally = {
           reactive_vals$queryingGEOsamples <- FALSE
         })
@@ -2303,7 +2331,7 @@ server <- function(input, output, session) {
         archives <- listEnsemblArchives()
         na.omit(as.numeric(data.table(archives)[grep("^\\d+$", version), version]))
       }, error = function(e){
-          reactive_vals$analysis_error <- sprintf("Please try HousKeepR again later. We cannot reach Ensembl: %s", e$message)
+        showNotification(sprintf("Please try HousKeepR again later. We cannot reach Ensembl: %s", e$message), type = "error", duration = NULL)
       })
       
       gc()

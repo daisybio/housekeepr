@@ -76,7 +76,6 @@ library(curl)
 # options(download.file.method="curl")
 
 library(AnnotationHub)
-setAnnotationHubOption("ASK", FALSE); 
 #GLOBAL VARIABLES
-ah <- AnnotationHub()
+ah <- AnnotationHub(ask = FALSE)
 

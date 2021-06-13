@@ -1,15 +1,10 @@
-housekeepr-profiling/ filter=lfs diff=lfs merge=lfs -text
-housekeepr-profiling filter=lfs diff=lfs merge=lfs -text
-housekeepr-profiling/housekeepr-profile.R filter=lfs diff=lfs merge=lfs -text
 housekeepr-profiling/normfinder-profiles.rds filter=lfs diff=lfs merge=lfs -text
 housekeepr-profiling/comparison-preparation.RData filter=lfs diff=lfs merge=lfs -text
 housekeepr-profiling/gset_dims.rds filter=lfs diff=lfs merge=lfs -text
-housekeepr-profiling/housekeepr-functions-comparison.R filter=lfs diff=lfs merge=lfs -text
 housekeepr-profiling/housekeepr_profiles.rds filter=lfs diff=lfs merge=lfs -text
-housekeepr-profiling/normfinder-profile.R filter=lfs diff=lfs merge=lfs -text
 housekeepr-profiling/normfinder_runtime.pdf filter=lfs diff=lfs merge=lfs -text
-housekeepr-profiling/normfinder_top10.R filter=lfs diff=lfs merge=lfs -text
-housekeepr-profiling/profile-comparison.R filter=lfs diff=lfs merge=lfs -text
 housekeepr-profiling/annotation_samples.rds filter=lfs diff=lfs merge=lfs -text
 housekeepr-profiling/profiling.png filter=lfs diff=lfs merge=lfs -text
 housekeepr-profiling/profiling.pdf filter=lfs diff=lfs merge=lfs -text
+housekeepr-profiling/normfinderTop10aggregated.tsv
+housekeepr-profiling/normfinderTop10long.tsv
