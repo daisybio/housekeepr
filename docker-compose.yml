@@ -11,113 +11,120 @@ services:
       - pgdata:/var/lib/postgresql/data
 
   housekeeprA:
-    image: quirinmanz/housekeepr:latest
+    image: housekeepr:local
     command: bash -c "chown -R shiny:shiny /srv/hkg-data/ && env | grep 'HOUSEKEEPR\|R_DEFAULT_INTERNET_TIMEOUT' > /srv/housekeepr/.Renviron && /init"
     depends_on:
       - db
     volumes:
+      - ./shiny-server.conf:/etc/shiny-server/shiny-server.conf
       - HouseKeepRDataVolume:/srv/hkg-data
     environment:
       - HOUSEKEEPR_DATADIR=/srv/hkg-data
       - HOUSEKEEPR_ENV=production
-      - HOUSEKEEPR_EXTERNAL_URL=http://localhost:8098
+      - HOUSEKEEPR_EXTERNAL_URL=http://10.162.163.34:8098
       - R_DEFAULT_INTERNET_TIMEOUT=1800
   housekeeprB:
-    image: quirinmanz/housekeepr:latest
+    image: housekeepr:local
     command: bash -c "chown -R shiny:shiny /srv/hkg-data/ && env | grep 'HOUSEKEEPR\|R_DEFAULT_INTERNET_TIMEOUT' > /srv/housekeepr/.Renviron && /init"
     depends_on:
       - db
     volumes:
+      - ./shiny-server.conf:/etc/shiny-server/shiny-server.conf
       - HouseKeepRDataVolume:/srv/hkg-data
     environment:
       - HOUSEKEEPR_DATADIR=/srv/hkg-data
       - HOUSEKEEPR_ENV=production
-      - HOUSEKEEPR_EXTERNAL_URL=http://localhost:8098
+      - HOUSEKEEPR_EXTERNAL_URL=http://10.162.163.34:8098
       - R_DEFAULT_INTERNET_TIMEOUT=1800
   housekeeprC:
-    image: quirinmanz/housekeepr:latest
+    image: housekeepr:local
     command: bash -c "chown -R shiny:shiny /srv/hkg-data/ && env | grep 'HOUSEKEEPR\|R_DEFAULT_INTERNET_TIMEOUT' > /srv/housekeepr/.Renviron && /init"
     depends_on:
       - db
     volumes:
+      - ./shiny-server.conf:/etc/shiny-server/shiny-server.conf
       - HouseKeepRDataVolume:/srv/hkg-data
     environment:
       - HOUSEKEEPR_DATADIR=/srv/hkg-data
       - HOUSEKEEPR_ENV=production
-      - HOUSEKEEPR_EXTERNAL_URL=http://localhost:8098
+      - HOUSEKEEPR_EXTERNAL_URL=http://10.162.163.34:8098
       - R_DEFAULT_INTERNET_TIMEOUT=1800
   housekeeprD:
-    image: quirinmanz/housekeepr:latest
+    image: housekeepr:local
     command: bash -c "chown -R shiny:shiny /srv/hkg-data/ && env | grep 'HOUSEKEEPR\|R_DEFAULT_INTERNET_TIMEOUT' > /srv/housekeepr/.Renviron && /init"
     depends_on:
       - db
     volumes:
+      - ./shiny-server.conf:/etc/shiny-server/shiny-server.conf
       - HouseKeepRDataVolume:/srv/hkg-data
     environment:
       - HOUSEKEEPR_DATADIR=/srv/hkg-data
       - HOUSEKEEPR_ENV=production
-      - HOUSEKEEPR_EXTERNAL_URL=http://localhost:8098
+      - HOUSEKEEPR_EXTERNAL_URL=http://10.162.163.34:8098
       - R_DEFAULT_INTERNET_TIMEOUT=1800
   housekeeprU:
-    image: quirinmanz/housekeepr:latest
+    image: housekeepr:local
     command: bash -c "chown -R shiny:shiny /srv/hkg-data/ && env | grep 'HOUSEKEEPR\|R_DEFAULT_INTERNET_TIMEOUT' > /srv/housekeepr/.Renviron && /init"
     depends_on:
       - db
     volumes:
+      - ./shiny-server.conf:/etc/shiny-server/shiny-server.conf
       - HouseKeepRDataVolume:/srv/hkg-data
     environment:
       - HOUSEKEEPR_DATADIR=/srv/hkg-data
       - HOUSEKEEPR_ENV=production
       #- HOUSEKEEPR_MODE=presentation
-      - HOUSEKEEPR_EXTERNAL_URL=http://localhost:8098
+      - HOUSEKEEPR_EXTERNAL_URL=http://10.162.163.34:8098
       - R_DEFAULT_INTERNET_TIMEOUT=1800
   housekeeprV:
-    image: quirinmanz/housekeepr:latest
+    image: housekeepr:local
     command: bash -c "chown -R shiny:shiny /srv/hkg-data/ && env | grep 'HOUSEKEEPR\|R_DEFAULT_INTERNET_TIMEOUT' > /srv/housekeepr/.Renviron && /init"
     depends_on:
       - db
     volumes:
+      - ./shiny-server.conf:/etc/shiny-server/shiny-server.conf
       - HouseKeepRDataVolume:/srv/hkg-data
     environment:
       - HOUSEKEEPR_DATADIR=/srv/hkg-data
       - HOUSEKEEPR_ENV=production
       #- HOUSEKEEPR_MODE=presentation
-      - HOUSEKEEPR_EXTERNAL_URL=http://localhost:8098
+      - HOUSEKEEPR_EXTERNAL_URL=http://10.162.163.34:8098
       - R_DEFAULT_INTERNET_TIMEOUT=1800
   housekeeprW:
-    image: quirinmanz/housekeepr:latest
+    image: housekeepr:local
     command: bash -c "chown -R shiny:shiny /srv/hkg-data/ && env | grep 'HOUSEKEEPR\|R_DEFAULT_INTERNET_TIMEOUT' > /srv/housekeepr/.Renviron && /init"
     depends_on:
       - db
     volumes:
+      - ./shiny-server.conf:/etc/shiny-server/shiny-server.conf
       - HouseKeepRDataVolume:/srv/hkg-data
     environment:
       - HOUSEKEEPR_DATADIR=/srv/hkg-data
       - HOUSEKEEPR_ENV=production
       #- HOUSEKEEPR_MODE=presentation
-      - HOUSEKEEPR_EXTERNAL_URL=http://localhost:8098
+      - HOUSEKEEPR_EXTERNAL_URL=http://10.162.163.34:8098
       - R_DEFAULT_INTERNET_TIMEOUT=1800
   housekeeprX:
-    image: quirinmanz/housekeepr:latest
+    image: housekeepr:local
     command: bash -c "chown -R shiny:shiny /srv/hkg-data/ && env | grep 'HOUSEKEEPR\|R_DEFAULT_INTERNET_TIMEOUT' > /srv/housekeepr/.Renviron && /init"
     depends_on:
       - db
     volumes:
+      - ./shiny-server.conf:/etc/shiny-server/shiny-server.conf
       - HouseKeepRDataVolume:/srv/hkg-data
     environment:
       - HOUSEKEEPR_DATADIR=/srv/hkg-data
       - HOUSEKEEPR_ENV=production
       #- HOUSEKEEPR_MODE=presentation
-      - HOUSEKEEPR_EXTERNAL_URL=http://localhost:8098
+      - HOUSEKEEPR_EXTERNAL_URL=http://10.162.163.34:8098
       - R_DEFAULT_INTERNET_TIMEOUT=1800
 
   nginx:
     build: nginx-docker
-    #image: housekeepr_nginx_local:latest
     ports:
       - "8098:80"
     #  - "8099:8080"
-    depends_on:
+    links:
       - housekeeprA
       - housekeeprB
       - housekeeprC
@@ -126,8 +133,8 @@ services:
       - housekeeprV
       - housekeeprW
       - housekeeprX
-
-    command: ["/wait-for-it.sh", "housekeeprA:3838", "-t", "0", "--", "/wait-for-it.sh", "housekeeprB:3838", "-t", "0", "--", "/wait-for-it.sh", "housekeeprC:3838", "-t", "0", "--", "/wait-for-it.sh", "housekeeprD:3838", "-t", "0", "--", "/wait-for-it.sh", "housekeeprU:3838", "-t", "0", "--", "/wait-for-it.sh", "housekeeprV:3838", "-t", "0", "--", "/wait-for-it.sh", "housekeeprW:3838", "-t", "0", "--", "/wait-for-it.sh", "housekeeprX:3838", "-t", "0", "--", "nginx", "-g", "daemon off;"]
+    volumes:
+      - ./nginx-docker/nginx.conf:/opt/nginx/conf/nginx.conf
 
 
 volumes:

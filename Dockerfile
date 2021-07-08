@@ -5,34 +5,35 @@ MAINTAINER Markus List <markus.list@wzw.tum.de>
 RUN apt-get update && apt-get install -y libxml2-dev libssl-dev libcurl4-openssl-dev libmariadbclient-dev libpq-dev libv8-dev liblzma-dev libbz2-dev zlib1g-dev libncurses5-dev
 
 #watchtower
-LABEL com.centurylinklabs.watchtower.stop-signal="SIGKILL"
+#LABEL com.centurylinklabs.watchtower.stop-signal="SIGKILL"
 
-#copy shiny app to work dir
+#set work dir
 RUN mkdir /srv/housekeepr
 WORKDIR /srv/housekeepr
-COPY . .
-
-#update shiny server conf and configure it to run housekeepr in single app mode
-RUN sed -i 's/site_dir \/srv\/shiny-server;/app_dir \/srv\/housekeepr;/g' /etc/shiny-server/shiny-server.conf
-
 
 #install R packages via renv
 ENV RENV_VERSION 0.12.3
-RUN R -e "install.packages('remotes', repos = c(CRAN = 'https://cloud.r-project.org')); \ 
-          remotes::install_github('rstudio/renv@${RENV_VERSION}'); \
-          renv::restore();"
+RUN R -e "install.packages('remotes', repos = c(CRAN = 'https://cloud.r-project.org'))"
+RUN R -e "remotes::install_github('rstudio/renv@${RENV_VERSION}')"
 
-#fix bug where app greys out on SSL connection
-RUN echo 'sanitize_errors off;disable_protocols xdr-streaming xhr-streaming iframe-eventsource iframe-htmlfile;' >> /etc/shiny-server/shiny-server.conf
+COPY renv.lock renv.lock
+RUN R -e "renv::restore()"
 
 # make shiny owner of housekeepr-dir 
-RUN chown -R shiny ./
+RUN chown -R shiny:shiny /srv
+
+# copy shiny app
+COPY ./*.R ./
+COPY ./init_data.RData .
+COPY ./www ./www
 
 # download AnnotationHub to speed up loading time
 USER shiny
 RUN R -e "library(AnnotationHub); \
+          setAnnotationHubOption('CACHE', '~/.myHub'); \
           ah <- AnnotationHub(ask = FALSE)"
           
 USER root
+
 
 EXPOSE 3838

@@ -616,9 +616,9 @@ aggregateByParalogGroup <- function(tT) {
   # use it later in the scoring function
   tT_aggr[, FC:= ifelse(FC>1,FC,1/FC)]
   # Normalizing the AveExpr, FC and variances values to calculate scores
-  tT_aggr[, AveExpr := scale(tT_aggr$AveExpr)]
+  # tT_aggr[, AveExpr := scale(tT_aggr$AveExpr)]
   #tT_aggr$FC <- scale(tT_aggr$FC)
-  tT_aggr[, variances := scale(tT_aggr$variances)]
+  # tT_aggr[, variances := scale(tT_aggr$variances)]
   
   tT_aggr$target_entrez <- as.character(tT_aggr$target_entrez)
   setkey(tT_aggr, "target_entrez")
@@ -632,11 +632,11 @@ calculateGeneScoresAndRanks <- function(tT_aggr) {
   # Calculating scores (AveExpr/(FC*variances))
   # add pseudo counts
   #tT_aggr[, score:=AveExpr/((FC+.Machine$double.eps)*(variances+.Machine$double.eps))]
-  tT_aggr[, score:=AveExpr/((FC)*(variances))]
+  tT_aggr[, score:=FC*sqrt(variances)/AveExpr]
   #tT_aggr$score <- scale(tT_aggr$score)
   # Calculating p-values for each gene based on the normalized scores
-  tT_aggr[, pvalue:=1-ecdf(abs(score))(abs(score))]
-  tT_aggr[, gene_rank:=as.double(rank(-abs(score)))]
+  tT_aggr[, pvalue:=1-ecdf(score)(score)]
+  tT_aggr[, gene_rank:=as.double(rank(score))]
   setorder(tT_aggr, gene_rank)
 }
 

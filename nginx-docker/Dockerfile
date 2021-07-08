@@ -1,33 +1,39 @@
-FROM nginx
+FROM debian:jessie
+MAINTAINER mlist@health.sdu.dk
+#set versions
+ENV NGINX_VERSION 1.9.4
 
-RUN apt-get update
-RUN apt-get install -y software-properties-common
-RUN apt-get install -y curl
-RUN apt-get install -y gpg
-RUN curl http://nginx.org/keys/nginx_signing.key | apt-key add -
-RUN echo "deb http://nginx.org/packages/debian/ stretch nginx\n deb-src http://nginx.org/packages/debian/ stretch nginx" >> /etc/apt/sources.list
-RUN cat /etc/apt/sources.list
-RUN apt-get update
-RUN apt-get install -y dpkg-dev
-WORKDIR /tmp
-RUN apt-get source nginx
-RUN apt-get build-dep -y nginx
-RUN mv nginx-* nginx
-WORKDIR /tmp/nginx
-RUN apt-get install -y git
-RUN git clone https://github.com/thomsonreuters/nginx-sticky-module-ng
-RUN rm nginx-sticky-module-ng/docs/sticky.pdf
-RUN rm nginx-sticky-module-ng/docs/sticky.vsd
+#install build dependencies
+RUN apt-get update && apt-get install -y libpcre3-dev build-essential libssl-dev libgeoip-dev git wget
 
-RUN LINE=`grep -n "config.status.nginx:" debian/rules | cut -f1 -d:` && LINE=$(($LINE+2)) && sed -i $LINE's/$/ --add-module=\/tmp\/nginx\/nginx-sticky-module-ng/' debian/rules
-RUN sed -i 's/$CFLAGS \-Werror//' ./auto/cc/icc ./auto/cc/gcc ./auto/cc/clang 
-RUN EDITOR=/bin/true dpkg-source -y --commit ./ sticky
-RUN dpkg-buildpackage -uc -us
+#add nginx user
+RUN adduser --system --no-create-home --disabled-login --disabled-password --group nginx
 
-WORKDIR /tmp
-RUN dpkg --install nginx_*.deb 
+#download and extract source
+RUN cd /opt &&\
+    git clone https://bitbucket.org/nginx-goodies/nginx-sticky-module-ng.git &&\
+    wget http://nginx.org/download/nginx-$NGINX_VERSION.tar.gz -P/opt &&\
+    tar -xvzf nginx-$NGINX_VERSION.tar.gz &&\
+cd nginx-$NGINX_VERSION &&\
+./configure --prefix=/opt/nginx \
+	--user=nginx \
+	--group=nginx \
+	--with-http_ssl_module \
+	--with-ipv6 \
+        --with-http_geoip_module \
+        --with-http_spdy_module \
+        --add-module=/opt/nginx-sticky-module-ng \
+	--error-log-path=/var/log/nginx/error.log \
+	--http-log-path=/var/log/nginx/access.log &&\
+make && make install
 
-COPY nginx.conf /etc/nginx/nginx.conf
-ADD ./wait-for-it.sh  /
-ADD ./www /www/
+#clean up
+RUN apt-get remove --purge -y build-essential && apt-get autoremove --purge -y && rm -rf /var/lib/apt/lists/*
+EXPOSE 80 443
 
+# forward request and error logs to docker log collector
+RUN ln -sf /dev/stdout /var/log/nginx/access.log
+RUN ln -sf /dev/stderr /var/log/nginx/error.log
+
+#start nginx
+CMD ["/opt/nginx/sbin/nginx", "-g", "daemon off;"]

@@ -1124,7 +1124,7 @@ server <- function(input, output, session) {
           # p("Once it is ready your result will be available ",
           #   a(href=paste0(housekeepr_external_url,"/?_values_&session=\"", reactive_vals$session_id, "\""), "here")
           # )
-          p(class="lead", strong("Please do not close this tab or start another HouseKeepR analysis until this is finished."))
+          p(class="lead", strong("Please do not close this tab or start another HouseKeepR session until this is finished."))
       )
     )
   })
