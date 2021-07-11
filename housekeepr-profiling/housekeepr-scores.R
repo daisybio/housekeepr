@@ -296,6 +296,31 @@ res_rank_product <- list(bootstrap_ranking=bootstrap_matrix[1:num_hkg],
                 bootstrap_ranking_long=bootstrap_matrix_long[paralog_group%in%top_hkg],
                 ranking_long=ranking_matrix_long[paralog_group%in%top_hkg])
 
+repeated_boot <- lapply(1:10, function(i){
+  bootstrapRes <- calculateBootstrapMatrix(ranking_matrix, bootstrap_replications, bootstrap_sample_size, num_hkg)#, print_paralog_groups = par_groups_of_interest)
+  # paralog_group na_ratio num_na_factor rank_mean   rank_var total_rank
+  # 1:         12365        0             0   69.3161   26.13037         16
+  # 2:           429        0             0  842.4812  688.40753        233
+  # 3:         10440        0             0 2605.0518 1974.60652        774
+  bootstrap_matrix <- bootstrapRes$bootstrap_matrix
+  bootstrap_matrix[,merge_idx:=1:nrow(bootstrap_matrix)]
+  bootstrap_matrix_long <- bootstrapRes$bootstrap_matrix_long
+  
+  annotateTargetParalogGroupsWithSymbols(ranking_matrix_long, paralogs_groups, "gene_id", target_orgDb,
+                                         paralogue_groups_to_be_annotated = bootstrap_matrix[1:num_hkg,paralog_group])
+  annotateTargetParalogGroupsWithSymbols(bootstrap_matrix, paralogs_groups, "gene_id", target_orgDb,
+                                         paralogue_groups_to_be_annotated = bootstrap_matrix[1:num_hkg,paralog_group])
+  annotateTargetParalogGroupsWithSymbols(bootstrap_matrix_long, paralogs_groups, "gene_id", target_orgDb,
+                                         paralogue_groups_to_be_annotated = bootstrap_matrix[1:num_hkg,paralog_group])
+  
+  return(copy(bootstrap_matrix[1:num_hkg][, run := i]))
+})
+repeated_boot_dt <- rbindlist(repeated_boot)
+library(ggplot2)
+ggplot(repeated_boot_dt, aes(x=reorder(symbols, total_rank), y=total_rank)) + 
+  geom_boxplot() + 
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) + 
+  scale_x_discrete(breaks=repeated_boot_dt$symbols[Reduce(`|`, sapply(experimentally_validated, grepl, x = repeated_boot_dt$symbols, simplify = F))])
 
 saveRDS(res_old, 'housekeepr-profiling/res_old_score.rds')
 saveRDS(res_CV_FC, 'housekeepr-profiling/res_CV_FC.rds')

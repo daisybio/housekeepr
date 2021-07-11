@@ -30,7 +30,7 @@ COPY ./www ./www
 # download AnnotationHub to speed up loading time
 USER shiny
 RUN R -e "library(AnnotationHub); \
-          setAnnotationHubOption('CACHE', '~/.myHub'); \
+          setAnnotationHubOption('CACHE', 'myHub'); \
           ah <- AnnotationHub(ask = FALSE)"
           
 USER root

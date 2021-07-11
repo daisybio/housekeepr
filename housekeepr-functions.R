@@ -632,11 +632,11 @@ calculateGeneScoresAndRanks <- function(tT_aggr) {
   # Calculating scores (AveExpr/(FC*variances))
   # add pseudo counts
   #tT_aggr[, score:=AveExpr/((FC+.Machine$double.eps)*(variances+.Machine$double.eps))]
-  tT_aggr[, score:=FC*sqrt(variances)/AveExpr]
+  #tT_aggr[, score:=FC*sqrt(variances)/AveExpr]
   #tT_aggr$score <- scale(tT_aggr$score)
   # Calculating p-values for each gene based on the normalized scores
-  tT_aggr[, pvalue:=1-ecdf(score)(score)]
-  tT_aggr[, gene_rank:=as.double(rank(score))]
+  tT_aggr[, gene_rank:=rank(as.double(rank(sqrt(variances)/AveExpr))*as.double(rank(FC)))]
+  tT_aggr[, pvalue:=1-ecdf(gene_rank)(gene_rank)]
   setorder(tT_aggr, gene_rank)
 }
 

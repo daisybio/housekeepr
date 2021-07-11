@@ -710,7 +710,6 @@ calculateBootstrapMatrix <- function(ranking_matrix, bootstrap_replications, boo
                      list(rowMeans(.SD,na.rm = TRUE), 
                           rowSds(.SD, na.rm=TRUE)),
                    .SDcols=grep("gene_rank",names(sample_ranking))]
-    browser()
     sample_ranking[,total_rank:=order(order(rank_mean, rank_var, na.last=TRUE))]
     bootstrap_matrix[,sample:=sample_ranking$total_rank]
     setnames(bootstrap_matrix, "sample", paste0("sample_", i))

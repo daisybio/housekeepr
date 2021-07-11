@@ -77,6 +77,6 @@ library(curl)
 
 library(AnnotationHub)
 #GLOBAL VARIABLES
-setAnnotationHubOption('CACHE', '~/.myHub')
+setAnnotationHubOption('CACHE', 'myHub')
 ah <- AnnotationHub(ask = FALSE)
 
