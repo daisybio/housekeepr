@@ -43,7 +43,7 @@ getExpressions <- function(gset_raws, gpls) {
   res <- lapply(gpls, function(gpl) {
     gset_raw <- gset_raws[[gpl]]
     if(class(gset_raw) == "GDS") {
-      gset <- GDS2eSet(gset_raw,do.log2=T)
+      gset <- GDS2eSet(gset_raw)
       ex <- exprs(gset)
     } else if (class(gset_raw) == "ExpressionSet") {
       gset <- gset_raw
@@ -130,14 +130,20 @@ calculateTopTable <- function(GSE_samples_annotations, GSE, gset, normfinder = F
   sml <- unlist(gsms)
   
   # Make sure to unlog the expression before calculating the variance
-  if (max(exprs(gset), na.rm = T) > 10000){
+  qx <- as.numeric(quantile(exprs(gset), c(0., 0.25, 0.5, 0.75, 0.99, 1.0), na.rm=T))
+  LogC <- (qx[5] > 100) ||
+    (qx[6]-qx[1] > 50 && qx[2] > 0)
+  if (LogC) { exprs(gset)[which(exprs(gset) <= 0)] <- NaN
+  exprs(gset) <- log2(exprs(gset)) }
     variances <- RowVar(exprs(gset))
-  } else {
-    exprs(gset) <- 2^exprs(gset)
-    variances <- RowVar(exprs(gset))
-  }
-  # Reapply log transform to the expression for the diff analysis afterwards
-  exprs(gset) <- log2(exprs(gset))
+  # if (max(exprs(gset), na.rm = T) > 10000){
+  #   variances <- RowVar(exprs(gset))
+  # } else {
+  #   exprs(gset) <- 2^exprs(gset)
+  #   variances <- RowVar(exprs(gset))
+  # }
+  # # Reapply log transform to the expression for the diff analysis afterwards
+  # exprs(gset) <- log2(exprs(gset))
   
   # prepare data for differential analysis
     if (normfinder) {
@@ -158,7 +164,8 @@ calculateTopTable <- function(GSE_samples_annotations, GSE, gset, normfinder = F
     # The AveExpr is the log mean expression, so renaming the col, and calculating the
     # mean expression without the log
     setnames(tT, old = "AveExpr", new = "logAveExpr")
-    tT[, AveExpr:= 2^logAveExpr]
+    # tT[, AveExpr:= 2^logAveExpr]
+  # }
   return(tT)
 }
 
@@ -185,7 +192,7 @@ findEnsemblGeneIdColumn <- function(tT, currentOrganism, orgDb, targetGeneIdColN
   ensemblIds <- ensemblIds[!is.na(ENSEMBL_ID) & ENSEMBL_ID != ""]
   # verify that these ensembl gene ids are still valid and not "retired" (according to ensembl)
   tryCatch({
-    mapped <- select(orgDb, keys=ensemblIds[!is.na(ENSEMBL_ID),ENSEMBL_ID], keytype="GENEID", columns="SYMBOL") %>%
+    mapped <- ensembldb::select(orgDb, keys=ensemblIds[!is.na(ENSEMBL_ID),ENSEMBL_ID], keytype="GENEID", columns="SYMBOL") %>%
       dplyr::distinct(GENEID) %>%
       dplyr::pull(GENEID)
     ensemblIds <- ensemblIds[ENSEMBL_ID%in%mapped]
@@ -256,7 +263,7 @@ mapEnsemblTranscriptToGeneId <- function(tT, currentOrganism, orgDb, targetGeneI
   
   # map ensembl transcript to ensembl gene id
   tryCatch({
-    mapped <- select(orgDb, keys=tT[!is.na(ENSEMBL_ID),ENSEMBL_ID], keytype="TXID", columns="GENEID")
+    mapped <- ensembldb::select(orgDb, keys=tT[!is.na(ENSEMBL_ID),ENSEMBL_ID], keytype="TXID", columns="GENEID")
     tT <- merge(tT, mapped, by.x="ENSEMBL_ID", by.y="TXID", allow.cartesian=TRUE, all.x=TRUE)
     
     if (targetGeneIdColName %in% names(tT)) {
@@ -317,7 +324,7 @@ mapEntrezIdToEnsemblGeneId <- function(tT, currentOrganism, orgDb, targetGeneIdC
     # map entrez IDs to ensembl gene ids
     if (!nrow(entrezIds) == 0){
     tryCatch({
-      mapped <- select(orgDb, keys=entrezIds$ENTREZ_ID, keytype="ENTREZID", columns="GENEID")
+      mapped <- ensembldb::select(orgDb, keys=entrezIds$ENTREZ_ID, keytype="ENTREZID", columns="GENEID")
       mapped$ENTREZID <- as.character(mapped$ENTREZID)
       entrezIds2 <- merge(entrezIds, mapped, by.x="ENTREZ_ID", by.y="ENTREZID", allow.cartesian=TRUE)
       tT[, ID := as.character(ID)]
@@ -352,8 +359,8 @@ ensureGeneIdColumn <- function(tT, currentOrganism, ah, ensembl_release, orgDb=N
   print("ensureGeneIdColumn")
   
   if (is.null(orgDb)) {
-    queryResult <- query(x=ah, pattern=currentOrganism)
-    orgDb <- queryResult[[grep(paste("Ensembl",ensembl_release,"EnsDb"), mcols(queryResult)$title, fixed=T)]]
+    queryResult <- query(x=query(ah, "EnsDb"), pattern=currentOrganism)
+    orgDb <- queryResult[[grep(paste("Ensembl", ensembl_release, "EnsDb"), mcols(queryResult)$title, fixed=T)]]
   }
   
   tT[,merge_idx:=1:nrow(tT)]
@@ -587,7 +594,7 @@ aggregateByParalogGroup <- function(tT) {
                                       # B, 
                                       logFC, 
                                       variances)]
-  tT_aggr[,AveExpr:=2^logAveExpr]
+  # tT_aggr[,AveExpr:=2^logAveExpr]
   # tT_aggr <- data.table(tT[, lapply(.SD, mean, na.rm=TRUE), by=c("gene_symbol"),
   #                          .SDcol=c("AveExpr","adj.P.Val","P.Value",
   #                                   "t","B","logFC","variances")])
@@ -599,22 +606,22 @@ aggregateByParalogGroup <- function(tT) {
   tT_aggr[, FC:= ifelse(FC>1,FC,1/FC)]
   
   # new score computation
-  tT_aggr[, sds := sqrt(variances)]
-  tT_aggr[, CV:= sds/AveExpr]
-  tT_aggr[, score_CV_FC:= CV*FC]
-  tT_aggr[, rank_CV_FC:=as.double(rank(score_CV_FC))]
-  tT_aggr[, rank_CV:=as.double(rank(CV))]
-  tT_aggr[, rank_FC:=as.double(rank(FC))]
-  tT_aggr[, rank_product:=as.double(rank(rank_CV*rank_FC))]
+  # tT_aggr[, sds := sqrt(variances)]
+  # tT_aggr[, CV:= sds/AveExpr]
+  # tT_aggr[, score_CV_FC:= CV*FC]
+  # tT_aggr[, rank_CV_FC:=as.double(rank(score_CV_FC))]
+  # tT_aggr[, rank_CV:=as.double(rank(CV))]
+  # tT_aggr[, rank_FC:=as.double(rank(FC))]
+  # tT_aggr[, rank_product:=as.double(rank(rank_CV*rank_FC))]
   
   # keep originals
-  tT_aggr[, AveExpr_unscaled := AveExpr]
-  tT_aggr[, variances_unscaled := variances]
+  # tT_aggr[, AveExpr_unscaled := AveExpr]
+  # tT_aggr[, variances_unscaled := variances]
   
   # Normalizing the AveExpr, FC and variances values to calculate scores
-  tT_aggr[, AveExpr := scale(tT_aggr$AveExpr)]
+  # tT_aggr[, AveExpr := scale(tT_aggr$AveExpr)]
   #tT_aggr$FC <- scale(tT_aggr$FC)
-  tT_aggr[, variances := scale(tT_aggr$variances)]
+  # tT_aggr[, variances := scale(tT_aggr$variances)]
   
   tT_aggr$target_entrez <- as.character(tT_aggr$target_entrez)
   setkey(tT_aggr, "target_entrez")
@@ -626,11 +633,11 @@ calculateGeneScoresAndRanks <- function(tT_aggr) {
   # Calculating scores (AveExpr/(FC*variances))
   # add pseudo counts
   #tT_aggr[, score:=AveExpr/((FC+.Machine$double.eps)*(variances+.Machine$double.eps))]
-  tT_aggr[, score:=AveExpr/((FC)*(variances))]
+  # tT_aggr[, score:=AveExpr/((FC)*(variances))]
   #tT_aggr$score <- scale(tT_aggr$score)
   # Calculating p-values for each gene based on the normalized scores
-  tT_aggr[, pvalue:=1-ecdf(abs(score))(abs(score))]
-  tT_aggr[, gene_rank:=as.double(rank(-abs(score)))]
+  tT_aggr[, gene_rank:=rank(as.double(rank(sqrt(variances)))*as.double(rank(FC)))]
+  tT_aggr[, pvalue:=1-ecdf(gene_rank)(gene_rank)]
   setorder(tT_aggr, gene_rank)
 }
 
@@ -748,7 +755,7 @@ calculateBootstrapMatrix <- function(ranking_matrix, bootstrap_replications, boo
 annotateTargetParalogGroupsWithSymbols <- function(m, paralogue_groups, geneIdColumn, target_orgDb, 
                                                    paralogue_groups_to_be_annotated=paralogue_groups[,get("paralog_group")]) {
   # get symbols for paralog groups
-  mapped <- na.omit(select(target_orgDb, keys=paralogue_groups[paralog_group %in% paralogue_groups_to_be_annotated,
+  mapped <- na.omit(ensembldb::select(target_orgDb, keys=paralogue_groups[paralog_group %in% paralogue_groups_to_be_annotated,
                                                                get(geneIdColumn)], keytype="GENEID", column="SYMBOL"))
   mapped <- data.table(mapped %>%
                          dplyr::group_by(GENEID) %>%

@@ -44,7 +44,7 @@ getExpressions <- function(gset_raws, gpls) {
   res <- lapply(gpls, function(gpl) {
     gset_raw <- gset_raws[[gpl]]
     if(class(gset_raw) == "GDS") {
-      gset <- GDS2eSet(gset_raw,do.log2=T)
+      gset <- GDS2eSet(gset_raw)
       ex <- exprs(gset)
     } else if (class(gset_raw) == "ExpressionSet") {
       gset <- gset_raw
@@ -133,14 +133,20 @@ calculateTopTable <- function(GSE_samples_annotations, GSE, gset) {
   if(!is.null(getDefaultReactiveDomain()))
     setProgress(detail='Formatting and normalizing data set')
   # Make sure to unlog the expression before calculating the variance
-  if (max(exprs(gset), na.rm = T) > 10000){
-    variances <- RowVar(exprs(gset))
-  } else {
-    exprs(gset) <- 2^exprs(gset)
-    variances <- RowVar(exprs(gset))
-  }
-  # Reapply log transform to the expression for the diff analysis afterwards
-  exprs(gset) <- log2(exprs(gset))
+  qx <- as.numeric(quantile(exprs(gset), c(0., 0.25, 0.5, 0.75, 0.99, 1.0), na.rm=T))
+  LogC <- (qx[5] > 100) ||
+    (qx[6]-qx[1] > 50 && qx[2] > 0)
+  if (LogC) { exprs(gset)[which(exprs(gset) <= 0)] <- NaN
+  exprs(gset) <- log2(exprs(gset)) }
+  variances <- RowVar(exprs(gset))
+  # if (max(exprs(gset), na.rm = T) > 10000){
+  #   variances <- RowVar(exprs(gset))
+  # } else {
+  #   exprs(gset) <- 2^exprs(gset)
+  #   variances <- RowVar(exprs(gset))
+  # }
+  # # Reapply log transform to the expression for the diff analysis afterwards
+  # exprs(gset) <- log2(exprs(gset))
   
   if(!is.null(getDefaultReactiveDomain()))
     setProgress(detail='Identifying differential genes and calculating fold changes')
@@ -166,7 +172,7 @@ calculateTopTable <- function(GSE_samples_annotations, GSE, gset) {
     # The AveExpr is the log mean expression, so renaming the col, and calculating the
     # mean expression without the log
     setnames(tT, old = "AveExpr", new = "logAveExpr")
-    tT[, AveExpr:= 2^logAveExpr]
+    # tT[, AveExpr:= 2^logAveExpr]
   # }
   return(tT)
 }
@@ -605,7 +611,7 @@ aggregateByParalogGroup <- function(tT) {
                                       # B, 
                                       logFC, 
                                       variances)]
-  tT_aggr[,AveExpr:=2^logAveExpr]
+  # tT_aggr[,AveExpr:=2^logAveExpr]
   # tT_aggr <- data.table(tT[, lapply(.SD, mean, na.rm=TRUE), by=c("gene_symbol"),
   #                          .SDcol=c("AveExpr","adj.P.Val","P.Value",
   #                                   "t","B","logFC","variances")])
@@ -635,7 +641,7 @@ calculateGeneScoresAndRanks <- function(tT_aggr) {
   #tT_aggr[, score:=FC*sqrt(variances)/AveExpr]
   #tT_aggr$score <- scale(tT_aggr$score)
   # Calculating p-values for each gene based on the normalized scores
-  tT_aggr[, gene_rank:=rank(as.double(rank(sqrt(variances)/AveExpr))*as.double(rank(FC)))]
+  tT_aggr[, gene_rank:=rank(as.double(rank(sqrt(variances)))*as.double(rank(FC)))]
   tT_aggr[, pvalue:=1-ecdf(gene_rank)(gene_rank)]
   setorder(tT_aggr, gene_rank)
 }

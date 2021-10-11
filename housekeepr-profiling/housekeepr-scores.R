@@ -95,7 +95,7 @@ for (i in 1:length(annotated_samples)) {
   tT <- ensureGeneIdColumn(tT, currentOrganism, ah, ensembl_release, orgDb=source_orgDb)
   
   tT <- removeWithMissingEntrezId(tT, "gene_id")
-  tT <- subset(tT, select=c("ID","adj.P.Val","P.Value", "logAveExpr","AveExpr", "variances","t","B","logFC", "gene_id"))
+  tT <- subset(tT, select=c("ID","adj.P.Val","P.Value", "logAveExpr", "variances","t","B","logFC", "gene_id"))
   
   tT <- unique(tT)
   res <- extractParalogs(tT, source_org_mart, all_paralogs, paralogs_groups, "gene_id")

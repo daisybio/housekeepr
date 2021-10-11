@@ -101,7 +101,7 @@ server <- function(input, output, session) {
           next()
         }
         tT <- removeWithMissingEntrezId(tT, "gene_id")
-        tT <- subset(tT, select=c("ID","adj.P.Val","P.Value", "logAveExpr","AveExpr", "variances","t","B","logFC", "gene_id"))
+        tT <- subset(tT, select=c("ID","adj.P.Val","P.Value", "logAveExpr", "variances","t","B","logFC", "gene_id"))
         
         tT <- unique(tT)
         
